@@ -1,4 +1,4 @@
-FROM resin/armv7hf-debian-qemu AS armBin
+FROM mammo0/armv7hf-debian-qemu AS armBin
 
 
 FROM arm32v6/node:dubnium-alpine as builder
