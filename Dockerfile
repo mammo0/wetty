@@ -1,4 +1,4 @@
-FROM arm32v6/node:dubnium-alpine as builder
+FROM arm32v7/node:dubnium-alpine as builder
 RUN apk add -U build-base python
 WORKDIR /usr/src/app
 COPY . /usr/src/app
@@ -6,7 +6,7 @@ RUN yarn && \
     yarn build && \
     yarn install --production --ignore-scripts --prefer-offline
 
-FROM arm32v6/node:dubnium-alpine
+FROM arm32v7/node:dubnium-alpine
 LABEL maintainer="butlerx@notthe.cloud"
 LABEL maintainer="marc.ammon@fau.de"
 
