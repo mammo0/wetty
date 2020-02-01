@@ -1,19 +1,14 @@
-FROM mammo0/armv7hf-debian-qemu AS armBin
+FROM multiarch/qemu-user-static:x86_64-arm as qemu
 
 
 FROM arm32v6/node:dubnium-alpine as builder
-COPY --from=armBin /usr/bin/cross-build-start /usr/bin/
-COPY --from=armBin /usr/bin/cross-build-end /usr/bin/
-COPY --from=armBin /usr/bin/qemu-arm-static /usr/bin/
-COPY --from=armBin /usr/bin/resin-xbuild /usr/bin/
-RUN [ "cross-build-start" ]
+COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 RUN apk add -U build-base python
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN yarn && \
     yarn build && \
     yarn install --production --ignore-scripts --prefer-offline
-RUN [ "cross-build-end" ]
 
 
 FROM arm32v6/node:dubnium-alpine
@@ -32,14 +27,9 @@ COPY --from=builder /usr/src/app/node_modules /usr/src/app/node_modules
 COPY package.json /usr/src/app
 COPY index.js /usr/src/app
 
-COPY --from=armBin /usr/bin/cross-build-start /usr/bin/
-COPY --from=armBin /usr/bin/cross-build-end /usr/bin/
-COPY --from=armBin /usr/bin/qemu-arm-static /usr/bin/
-COPY --from=armBin /usr/bin/resin-xbuild /usr/bin/
-RUN [ "cross-build-start" ]
+COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 RUN apk add -U openssh-client sshpass && \
     mkdir ~/.ssh && \
     ssh-keyscan -H $SSHHOST >> ~/.ssh/known_hosts
-RUN [ "cross-build-end" ]
 
 ENTRYPOINT [ "node", "." ]
