@@ -22,7 +22,6 @@ COPY --from=builder /usr/src/app/node_modules /usr/src/app/node_modules
 COPY package.json /usr/src/app
 COPY index.js /usr/src/app
 RUN apk add -U openssh-client sshpass && \
-    mkdir ~/.ssh && \
-    ssh-keyscan -H $SSHHOST >> ~/.ssh/known_hosts
+    mkdir ~/.ssh
 
 ENTRYPOINT [ "node", "." ]
