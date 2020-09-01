@@ -32,7 +32,10 @@ COPY index.js /usr/src/app
 COPY --from=qemu / /usr/bin
 RUN [ "cross-build-start" ]
 RUN apk add -U openssh-client sshpass && \
-    mkdir ~/.ssh
+    mkdir ~/.ssh && \
+    echo '#!/usr/bin/env sh' > /entrypoint.sh && \
+    echo 'node .' >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 RUN [ "cross-build-end" ]
 
-ENTRYPOINT [ "node", "." ]
+ENTRYPOINT [ "/entrypoint.sh" ]

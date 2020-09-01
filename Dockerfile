@@ -22,6 +22,9 @@ COPY --from=builder /usr/src/app/node_modules /usr/src/app/node_modules
 COPY package.json /usr/src/app
 COPY index.js /usr/src/app
 RUN apk add -U openssh-client sshpass && \
-    mkdir ~/.ssh
+    mkdir ~/.ssh && \
+    echo '#!/usr/bin/env sh' > /entrypoint.sh && \
+    echo 'node .' >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
-ENTRYPOINT [ "node", "." ]
+ENTRYPOINT [ "/entrypoint.sh" ]
